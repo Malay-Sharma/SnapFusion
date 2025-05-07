@@ -2,7 +2,7 @@ import { create } from 'zustand'
 
 import { ImageGenerationFormSchema } from '@/components/image-generation/Configurations';
 import { z } from "zod"
-import { generateImageAction } from '@/app/actions/image-actions';
+import { generateImageAction, storeImages } from '@/app/actions/image-actions';
 
 interface GenerateState{
     loading: boolean;
@@ -28,11 +28,14 @@ const useGeneratedStore = create<GenerateState>((set) => ({
 
         const dataWithUrl = data.map((url: string) => {
             return{
-               url 
+               url ,
+               ...values
             }
         })
 
         set({images: dataWithUrl, loading: false})
+
+        await storeImages(dataWithUrl)
     } catch (error) {
         console.error(error);
         set({
